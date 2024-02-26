@@ -11,19 +11,22 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 
+
 public class QRCodeGenerator {
 
-    public static void generateQRCode(Person person) throws WriterException, IOException {
-        String qrCodePath = "C:\\Users\\Administrator\\Desktop\\QRCodes\\";
+
+
+    public static void generateQRCode(Person person, String qrCodePath) throws WriterException, IOException {
+
         String qrCodeName = qrCodePath+person.getFullName()+"-QRCode.png";
+
+        String link = "https://www.youtube.com/watch?v=-1l-yBus-NA";
 
         var qrCodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = qrCodeWriter.encode(
-                "ID: "+person.getId()+ "\n"+
-                        "FullName: "+person.getFullName()+ "\n"+
-                        "Occupation: "+person.getOccupation()+ "\n"+
-                        "Email: "+person.getEmail(),
-                BarcodeFormat.QR_CODE, 400,400);
+                link,
+                BarcodeFormat.QR_CODE,
+                400,400);
 
         Path path = FileSystems.getDefault().getPath(qrCodeName);
         MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);

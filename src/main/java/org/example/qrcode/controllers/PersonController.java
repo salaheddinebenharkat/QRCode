@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.qrcode.models.Person;
 import org.example.qrcode.services.PersonService;
 import org.example.qrcode.utils.QRCodeGenerator;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -16,6 +17,9 @@ import java.util.List;
 public class PersonController {
 
     private final PersonService personService;
+
+    @Value("${qrcode.output.directory}")
+    String qrCodePath;
 
     @PostMapping(path = "/add")
     public Person savePerson(@RequestBody Person person){
@@ -37,14 +41,9 @@ public class PersonController {
         personService.deletePerson(id);
     }
 
-    @GetMapping(path = "/QRCodes")
-    public void generateQRCodes() throws IOException, WriterException {
-        List<Person> people = personService.getAllPeople();
-        if (!people.isEmpty()){
-            for (Person person : people){
-                QRCodeGenerator.generateQRCode(person);
-                System.out.println(person.getFullName()+" OK !!!");
-            }
-        }
+    @GetMapping(path = "/QRCodes/{id}")
+    public void generateQRCodes(@PathVariable Long id) throws IOException, WriterException {
+        Person person = personService.getPerson(id);
+         QRCodeGenerator.generateQRCode(person, qrCodePath);
     }
 }
